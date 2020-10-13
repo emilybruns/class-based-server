@@ -55,7 +55,8 @@ class HttpServer():
         Then you would return "/images/sample_1.png"
         """
 
-        return "TODO: COMPLETE THIS"  # TODO
+        path = request.split(' ')[1]
+        return path
 
 
     @staticmethod
@@ -87,8 +88,12 @@ class HttpServer():
 
         if path.endswith('/'):
             return b"text/plain"
+        elif path.endswith('html'):
+            return b"text/html"
+        elif path.endswith('.png'):
+            return b"image/png"
         else:
-            return b"TODO: FINISH THE REST OF THESE CASES"  # TODO
+            return b"text/plain"
 
     @staticmethod
     def get_content(path):
@@ -123,8 +128,25 @@ class HttpServer():
             # The file `webroot/a_page_that_doesnt_exist.html`) doesn't exist,
             # so this should raise a FileNotFoundError.
         """
+        directory = os.path.join(os.getcwd(), 'webroot')
+        new_path = os.path.join(directory, *path.split('/'))
 
-        return b"Not implemented!"  # TODO: Complete this function.
+        try:
+            if os.path.isdir(new_path):
+                if new_path.endswith('/'):
+                    directory_list = os.listdir(new_path)
+                    content = '\n'.join(directory_list)
+                    return content.encode()
+
+            if os.path.isfile(new_path):
+                with open(new_path, "rb") as f:
+                    data = f.read()
+                return data
+
+            else:
+                raise FileNotFoundError
+        except FileNotFoundError:
+            raise FileNotFoundError
 
     def __init__(self, port):
         self.port = port
@@ -164,9 +186,7 @@ class HttpServer():
                         body = self.get_content(path)
                         mimetype = self.get_mimetype(path)
 
-                        response = self.make_response(
-                            b"200", b"OK", body, mimetype
-                        )
+                        response = self.make_response(b"200", b"OK", body, mimetype)
 
                     except FileNotFoundError:
                         body = b"Couldn't find the file you requested."
@@ -197,4 +217,3 @@ if __name__ == '__main__':
 
     server = HttpServer(port)
     server.serve()
-

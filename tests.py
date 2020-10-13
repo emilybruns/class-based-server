@@ -10,7 +10,6 @@ class WebTestCase(unittest.TestCase):
 
     def setUp(self):
         self.port = random.randint(8001, 16000)
-
         self.server_process = subprocess.Popen(
             [
                 "python",
