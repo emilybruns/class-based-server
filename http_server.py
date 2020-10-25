@@ -131,21 +131,19 @@ class HttpServer():
         directory = os.path.join(os.getcwd(), 'webroot')
         new_path = os.path.join(directory, *path.split('/'))
 
-        try:
-            if os.path.isdir(new_path):
-                if new_path.endswith('/'):
-                    directory_list = os.listdir(new_path)
-                    content = '\n'.join(directory_list)
-                    return content.encode()
+       
+        if os.path.isdir(new_path):
+            if new_path.endswith('/'):
+                directory_list = os.listdir(new_path)
+                content = '\n'.join(directory_list)
+                return content.encode()
 
-            if os.path.isfile(new_path):
-                with open(new_path, "rb") as f:
-                    data = f.read()
-                return data
+        if os.path.isfile(new_path):
+            with open(new_path, "rb") as f:
+                data = f.read()
+            return data
 
-            else:
-                raise FileNotFoundError
-        except FileNotFoundError:
+        else:
             raise FileNotFoundError
 
     def __init__(self, port):
